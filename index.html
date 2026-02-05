@@ -1,0 +1,396 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Atendimento Imediato - Apoio Especializado</title>
+    
+    <!-- CDNs Essenciais -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        scroll-behavior: smooth;
+      }
+      .bg-primary { background-color: #0F3D2E; }
+      .bg-medium { background-color: #1F6F54; }
+      .bg-light { background-color: #CFE9DE; }
+      .text-primary { color: #0F3D2E; }
+      .text-medium { color: #1F6F54; }
+      
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .animate-fadeIn {
+        animation: fadeIn 0.3s ease-out forwards;
+      }
+    </style>
+  <link rel="stylesheet" href="/index.css">
+</head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const { useState } = React;
+
+      const WHATSAPP_URL = "https://wa.me/5521995207612?text=Vi%20o%20site%20e%20gostaria%20de%20obter%20um%20parecido%20agora%20mesmo";
+
+      // --- Componente de Ícone Customizado (Substituindo Lucide-React para evitar erro #130) ---
+      const Icon = ({ name, className = "w-6 h-6" }) => {
+        const paths = {
+          MessageCircle: <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" />,
+          ChevronDown: <path d="m6 9 6 6 6-6" />,
+          ShieldCheck: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z M9 12l2 2 4-4" />,
+          Ambulance: <path d="M10 10H6 M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2 M19 18h2a1 1 0 0 0 1-1v-3.28a1 1 0 0 0-.68-.948l-4.15-1.41a2 2 0 0 1-1.17-1.362L14 6 M17 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4z M7 18a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" />,
+          Scale: <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z M2 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z M7 21h10 M12 3v18" />,
+          Users: <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2 M9 7a4 4 0 1 0 0-8 4 4 0 0 0 0 8z M22 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75" />,
+          Clock: <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z M12 6v6l4 2" />,
+          AlertCircle: <path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z M12 8v4 M12 16h.01" />,
+          Heart: <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+        };
+
+        return (
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className={className}
+          >
+            {paths[name] || null}
+          </svg>
+        );
+      };
+
+      // --- Componentes de UI ---
+
+      const Button = ({ children, className = "", primary = false, href = "" }) => {
+        const baseStyles = "px-8 py-4 rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 transform hover:scale-105 active:scale-95 shadow-lg cursor-pointer";
+        const variants = primary 
+          ? "bg-[#1F6F54] text-white hover:bg-[#165a44]" 
+          : "bg-white text-[#0F3D2E] border-2 border-[#1F6F54] hover:bg-[#CFE9DE]";
+        
+        if (href) {
+          return (
+            <a href={href} className={`${baseStyles} ${variants} ${className}`} target="_blank" rel="noopener noreferrer">
+              {children}
+            </a>
+          );
+        }
+
+        return (
+          <button className={`${baseStyles} ${variants} ${className}`}>
+            {children}
+          </button>
+        );
+      };
+
+      const Card = ({ children, className = "" }) => (
+        <div className={`bg-[#CFE9DE] p-6 rounded-2xl border border-transparent hover:border-[#1F6F54] transition-all duration-300 ${className}`}>
+          {children}
+        </div>
+      );
+
+      const Accordion = ({ question, answer }) => {
+        const [isOpen, setIsOpen] = useState(false);
+        return (
+          <div className="border-b border-gray-200">
+            <button 
+              onClick={() => setIsOpen(!isOpen)}
+              className="w-full py-6 flex justify-between items-center text-left hover:text-[#1F6F54] transition-colors"
+            >
+              <span className="text-lg font-semibold text-[#0F3D2E]">{question}</span>
+              <Icon name="ChevronDown" className={`w-5 h-5 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+            </button>
+            {isOpen && (
+              <div className="pb-6 text-gray-600 leading-relaxed animate-fadeIn">
+                {answer}
+              </div>
+            )}
+          </div>
+        );
+      };
+
+      // --- Seções ---
+
+      const Navbar = () => (
+        <nav className="fixed top-0 w-full bg-white/90 backdrop-blur-md z-50 border-b border-gray-100">
+          <div className="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="bg-[#0F3D2E] p-2 rounded-lg text-white">
+                <Icon name="Heart" />
+              </div>
+              <span className="font-bold text-xl text-[#0F3D2E]">Cuidado Vital</span>
+            </div>
+            <div className="hidden md:flex gap-4">
+              <Button className="py-2 px-6 h-10 text-sm" primary href={WHATSAPP_URL}>
+                <Icon name="MessageCircle" className="w-4 h-4" /> WhatsApp 24h
+              </Button>
+            </div>
+          </div>
+        </nav>
+      );
+
+      const Hero = () => (
+        <section className="pt-32 pb-16 md:pt-48 md:pb-24 bg-white overflow-hidden">
+          <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
+            <div className="space-y-8">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#0F3D2E] leading-tight">
+                Existe ajuda profissional imediata para situações graves.
+              </h1>
+              <p className="text-xl text-[#1F6F54] font-medium">
+                Buscar orientação é um passo responsável para proteger quem você ama.
+              </p>
+              <p className="text-gray-600 text-lg leading-relaxed max-w-xl">
+                Atendimento imediato com profissionais especializados para avaliar a situação e orientar sobre as medidas necessárias, incluindo remoção assistida e internação, sempre com responsabilidade, sigilo e respaldo legal.
+              </p>
+              <Button primary className="w-full md:w-auto" href={WHATSAPP_URL}>
+                <Icon name="MessageCircle" className="w-5 h-5" /> Falar agora com um especialista
+              </Button>
+            </div>
+            <div className="relative">
+              <div className="absolute -z-10 bg-[#CFE9DE] w-[140%] h-[140%] rounded-full -top-1/4 -right-1/4" />
+              <img 
+                src="https://www.clinicaderecuperacaosinais.com.br/imagens/categorias/casa-reabilitacao-usuarios-drogas-01.webp" 
+                alt="Casa de reabilitação profissional" 
+                className="rounded-3xl shadow-2xl object-cover w-full h-[400px] md:h-[500px]"
+              />
+            </div>
+          </div>
+        </section>
+      );
+
+      const Problems = () => (
+        <section className="py-20 bg-white">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-[#0F3D2E] mb-6">
+                Você ou sua família estão enfrentando uma situação urgente e não sabem como agir?
+              </h2>
+              <p className="text-lg text-gray-600">
+                Casos de dependência química, alcoolismo ou crises mentais graves afetam toda a família e podem evoluir rapidamente quando não há intervenção adequada.
+              </p>
+            </div>
+            
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+              {[
+                "Uso contínuo e descontrolado de álcool ou drogas",
+                "Crises emocionais intensas ou desorganização mental",
+                "Risco à própria segurança ou de terceiros",
+                "Recusa constante em aceitar ajuda",
+                "Conflitos familiares graves",
+                "Necessidade de internação com urgência"
+              ].map((item, i) => (
+                <Card key={i} className="flex items-start gap-4">
+                  <div className="bg-white p-2 rounded-lg shrink-0">
+                    <Icon name="AlertCircle" className="text-[#1F6F54] w-5 h-5" />
+                  </div>
+                  <p className="text-[#0F3D2E] font-medium leading-tight">{item}</p>
+                </Card>
+              ))}
+            </div>
+
+            <div className="bg-[#0F3D2E] rounded-3xl p-8 md:p-12 text-center text-white">
+              <p className="text-xl md:text-2xl font-light mb-8">
+                Existem medidas profissionais e legais para proteger o paciente e a família.
+              </p>
+              <Button className="mx-auto bg-white text-[#0F3D2E] border-none" href={WHATSAPP_URL}>
+                Receber orientação imediata
+              </Button>
+            </div>
+          </div>
+        </section>
+      );
+
+      const Authority = () => (
+        <section className="py-20 bg-[#CFE9DE]">
+          <div className="max-w-7xl mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
+            <div className="order-2 md:order-1">
+              <img 
+                src="https://www.gruporecanto.com.br/wp-content/uploads/2025/05/grupo-de-apoio-dependecia-quimica-1.jpg" 
+                alt="Grupo de apoio e acolhimento" 
+                className="rounded-3xl shadow-xl w-full aspect-square object-cover"
+              />
+            </div>
+            <div className="space-y-6 order-1 md:order-2">
+              <h3 className="text-3xl md:text-4xl font-bold text-[#0F3D2E]">
+                Você não precisa lidar com isso sozinho — nem improvisar decisões.
+              </h3>
+              <p className="text-lg text-[#1F6F54] leading-relaxed">
+                Em situações graves, esperar a aceitação do paciente nem sempre é possível. A atuação profissional é essencial para garantir segurança, cuidado e encaminhamento adequado.
+              </p>
+              <p className="text-gray-700 leading-relaxed">
+                Atuamos com avaliação responsável, orientação familiar e indicação das medidas necessárias, incluindo remoção assistida e internação, quando houver critérios clínicos e legais.
+              </p>
+              <Button primary className="w-full md:w-auto" href={WHATSAPP_URL}>
+                <Icon name="MessageCircle" className="w-5 h-5" /> Falar agora com um profissional
+              </Button>
+            </div>
+          </div>
+        </section>
+      );
+
+      const Process = () => (
+        <section className="py-20 bg-white">
+          <div className="max-w-7xl mx-auto px-4">
+            <div className="text-center max-w-3xl mx-auto mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-[#0F3D2E] mb-6">
+                Internação: quando é necessária e como funciona
+              </h2>
+              <p className="text-lg text-gray-600">
+                A internação é uma medida de cuidado e proteção, indicada quando há risco, agravamento do quadro ou incapacidade momentânea de autocuidado. Não é punição.
+              </p>
+            </div>
+
+            <div className="grid md:grid-cols-5 gap-8 mb-20 relative">
+              {[
+                { icon: "Clock", text: "Avaliação profissional imediata" },
+                { icon: "Users", text: "Orientação clara à família" },
+                { icon: "Ambulance", text: "Remoção assistida por equipe" },
+                { icon: "ShieldCheck", text: "Internação voluntária ou involuntária" },
+                { icon: "Scale", text: "Encaminhamento clínico adequado" }
+              ].map((step, i) => (
+                <div key={i} className="text-center space-y-4 group">
+                  <div className="w-16 h-16 mx-auto bg-[#CFE9DE] rounded-2xl flex items-center justify-center text-[#1F6F54] group-hover:bg-[#1F6F54] group-hover:text-white transition-all duration-300">
+                    <Icon name={step.icon} className="w-8 h-8" />
+                  </div>
+                  <p className="font-semibold text-[#0F3D2E] text-sm leading-tight">{step.text}</p>
+                </div>
+              ))}
+            </div>
+
+            <div className="max-w-4xl mx-auto border-2 border-[#CFE9DE] rounded-3xl p-8 md:p-12 text-center space-y-6">
+              <h3 className="text-2xl md:text-3xl font-bold text-[#0F3D2E]">
+                Realizamos internação involuntária nos termos da lei
+              </h3>
+              <p className="text-gray-600 text-lg leading-relaxed">
+                Quando há risco e o paciente não aceita ajuda, a internação involuntária pode ser indicada, sempre com critérios técnicos, comunicação familiar e respeito à legislação vigente (Lei 10.216/01).
+              </p>
+              <Button primary className="mx-auto" href={WHATSAPP_URL}>
+                Solicitar avaliação imediata
+              </Button>
+            </div>
+          </div>
+        </section>
+      );
+
+      const UrgencyBanner = () => (
+        <section className="py-20 bg-[#0F3D2E] text-white">
+          <div className="max-w-4xl mx-auto px-4 text-center space-y-8">
+            <h3 className="text-3xl md:text-4xl font-bold">
+              Em situações urgentes, agir rápido pode evitar consequências mais graves
+            </h3>
+            <p className="text-xl font-light opacity-90 leading-relaxed">
+              O atendimento imediato permite avaliar o cenário e conduzir decisões com responsabilidade. O primeiro contato não obriga nenhuma decisão — é apenas uma conversa para orientação técnica e ética.
+            </p>
+            <div className="flex flex-col md:flex-row gap-4 justify-center">
+              <Button className="bg-white text-[#0F3D2E] border-none shadow-xl hover:bg-gray-100" href={WHATSAPP_URL}>
+                <Icon name="MessageCircle" className="w-5 h-5" /> Iniciar Conversa
+              </Button>
+            </div>
+          </div>
+        </section>
+      );
+
+      const FAQ = () => (
+        <section className="py-20 bg-white">
+          <div className="max-w-3xl mx-auto px-4">
+            <h2 className="text-3xl font-bold text-[#0F3D2E] text-center mb-12">Dúvidas Frequentes</h2>
+            <div className="space-y-2">
+              <Accordion 
+                question="Vocês realizam internação imediata?" 
+                answer="Sim. Após uma avaliação técnica inicial para entender o nível de risco e a urgência do caso, podemos mobilizar as equipes de remoção e a unidade de saúde em poucas horas."
+              />
+              <Accordion 
+                question="A internação pode ser involuntária?" 
+                answer="Sim. A legislação brasileira (Lei 10.216/2001) permite a internação involuntária quando há riscos comprovados à saúde ou à vida do paciente ou de terceiros, sempre mediante laudo médico especializado."
+              />
+              <Accordion 
+                question="Vocês fazem a remoção do paciente?" 
+                answer="Sim. Dispomos de equipes especializadas em remoção assistida, treinadas para atuar com respeito, humanidade e segurança, garantindo a integridade física de todos os envolvidos."
+              />
+              <Accordion 
+                question="Familiares podem entrar em contato sozinhos?" 
+                answer="Sim, a maioria dos nossos atendimentos começa com o contato da família que está exausta ou em perigo. Nossa primeira etapa é justamente acolher e orientar esses familiares."
+              />
+              <Accordion 
+                question="O atendimento é sigiloso?" 
+                answer="Absolutamente. O sigilo profissional e a ética médica são pilares fundamentais do nosso trabalho. Todas as informações compartilhadas são protegidas e tratadas com máxima discrição."
+              />
+            </div>
+          </div>
+        </section>
+      );
+
+      const Footer = () => (
+        <footer className="bg-gray-50 py-12 border-t border-gray-100">
+          <div className="max-w-7xl mx-auto px-4 text-center space-y-6">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <div className="bg-[#0F3D2E] p-2 rounded-lg text-white">
+                <Icon name="Heart" className="w-5 h-5" />
+              </div>
+              <span className="font-bold text-lg text-[#0F3D2E]">Cuidado Vital</span>
+            </div>
+            <p className="text-gray-500 text-sm max-w-2xl mx-auto leading-relaxed">
+              Respeitamos todas as normas legais e éticas do CFM e Ministério da Saúde. 
+              Este site tem caráter informativo e de acolhimento. A internação é uma medida clínica 
+              que depende de avaliação profissional individualizada.
+            </p>
+            <div className="text-gray-400 text-xs pt-4">
+              &copy; {new Date().getFullYear()} Cuidado Vital - Atendimento Especializado. Todos os direitos reservados.
+            </div>
+          </div>
+        </footer>
+      );
+
+      const FloatingWhatsApp = () => (
+        <a 
+          href={WHATSAPP_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform flex items-center gap-2 group"
+        >
+          <Icon name="MessageCircle" className="w-8 h-8" />
+          <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 whitespace-nowrap font-semibold">
+            Atendimento 24h
+          </span>
+        </a>
+      );
+
+      function App() {
+        return (
+          <div className="min-h-screen bg-white">
+            <Navbar />
+            <Hero />
+            <Problems />
+            <Authority />
+            <Process />
+            <UrgencyBanner />
+            <FAQ />
+            <Footer />
+            <FloatingWhatsApp />
+          </div>
+        );
+      }
+
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<App />);
+    </script>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>
